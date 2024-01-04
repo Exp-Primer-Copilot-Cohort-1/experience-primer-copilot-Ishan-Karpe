@@ -1,48 +1,33 @@
-// Create a web server
+// Create a web server for comment
 
-// Import express module
-const express = require("express");
+var express = require('express');
+var fs = require('fs');
+var bodyParser = require('body-parser');
 
-// Import path module
-const path = require("path");
+var app = express();
+app.use(bodyParser.urlencoded({extended: false}));
 
-// Import body-parser module
-const bodyParser = require("body-parser");
+var COMMENTS_FILE = __dirname + '/comments.json';
 
-// Create an express application
-const app = express();
-
-// Set the template engine
-app.set("view engine", "ejs");
-
-// Set the views directory
-app.set("views", path.join(__dirname, "views"));
-
-// Set the static resources directory
-app.use(express.static(path.join(__dirname, "public")));
-
-// Configure body-parser to handle post requests
-app.use(bodyParser.urlencoded({ extended: false }));
-
-// Configure body-parser to handle JSON data requests
-app.use(bodyParser.json());
-
-// Import the comments module
-const comments = require("./comments");
-
-// Import the comments route
-const commentsRoute = require("./routes/comments");
-
-// Add the comments route to the application
-app.use(commentsRoute);
-
-// Import the index route
-const indexRoute = require("./routes/index");
-
-// Add the index route to the application
-app.use(indexRoute);
-
-// Start the web server on port 3000
-app.listen(3000, () => {
-  console.log("Server started on port 3000");
+// Get all comments
+app.get('/api/comments', function(req, res) {
+	fs.readFile(COMMENTS_FILE, function(err, data) {
+		if(err) {
+			console.error(err);
+			process.exit(1);
+		}
+		res.setHeader('Content-Type', 'application/json');
+		res.send(data);
+	});
 });
+
+// Post a new comment
+app.post('/api/comments', function(req, res) {
+	fs.readFile(COMMENTS_FILE, function(err, data) {
+		if(err) {
+			console.error(err);
+			process.exit(1);
+		}
+		var comments = JSON.parse(data);
+		var newComment = {
+			id: Date.now(),
