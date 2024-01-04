@@ -28,6 +28,4 @@ app.post('/api/comments', function(req, res) {
 			console.error(err);
 			process.exit(1);
 		}
-		var comments = JSON.parse(data);
-		var newComment = {
-			id: Date.now(),
+		var comments = JSON.parse(data);})});
